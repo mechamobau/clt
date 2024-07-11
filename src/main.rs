@@ -21,7 +21,7 @@ enum CommandEnum {
 }
 
 struct Salario {
-    valor: f64,
+    bruto: f64,
     dependentes: u32,
     vale_transporte: f64,
     vale_refeicao: f64,
@@ -29,7 +29,7 @@ struct Salario {
 
 impl Salario {
     fn calcular_inss(&self) -> f64 {
-        let salario = self.valor;
+        let salario = self.bruto;
         if salario <= 1320.00 {
             salario * 0.075
         } else if salario <= 2571.29 {
@@ -52,7 +52,7 @@ impl Salario {
     fn calcular_irrf(&self) -> f64 {
         let inss = self.calcular_inss();
         let deducao_dependente = 189.59 * self.dependentes as f64;
-        let base_calculo = self.valor - inss - deducao_dependente;
+        let base_calculo = self.bruto - inss - deducao_dependente;
 
         if base_calculo <= 1903.98 {
             0.0
@@ -70,14 +70,14 @@ impl Salario {
     fn calcular_salario_liquido(&self) -> f64 {
         let inss = self.calcular_inss();
         let irrf = self.calcular_irrf();
-        let vt = self.valor * 0.06;
+        let vt = self.bruto * 0.06;
         let vt_deducao = if vt < self.vale_transporte {
             vt
         } else {
             self.vale_transporte
         };
         let vr = self.vale_refeicao;
-        self.valor - inss - irrf - vt_deducao - vr
+        self.bruto - inss - irrf - vt_deducao - vr
     }
 }
 
@@ -116,7 +116,7 @@ fn main() {
         dependentes,
         vale_refeicao,
         vale_transporte,
-        valor,
+        bruto: valor,
     };
 
     match &cli.command {
