@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
-use std::io::{self, Write};
+use core::Salario;
+use utils::input;
 
 #[derive(Subcommand)]
 enum CommandEnum {
@@ -14,72 +15,13 @@ enum CommandEnum {
     Contrato,
     Inss,
     Irrf,
-    Holerite,
     Reajuste,
     Aviso,
     Jornada,
 }
 
-struct Salario {
-    bruto: f64,
-    dependentes: u32,
-    vale_transporte: f64,
-    vale_refeicao: f64,
-}
-
-impl Salario {
-    fn calcular_inss(&self) -> f64 {
-        let salario = self.bruto;
-        if salario <= 1320.00 {
-            salario * 0.075
-        } else if salario <= 2571.29 {
-            1320.00 * 0.075 + (salario - 1320.00) * 0.09
-        } else if salario <= 3856.94 {
-            1320.00 * 0.075 + (2571.29 - 1320.00) * 0.09 + (salario - 2571.29) * 0.12
-        } else if salario <= 7507.49 {
-            1320.00 * 0.075
-                + (2571.29 - 1320.00) * 0.09
-                + (3856.94 - 2571.29) * 0.12
-                + (salario - 3856.94) * 0.14
-        } else {
-            1320.00 * 0.075
-                + (2571.29 - 1320.00) * 0.09
-                + (3856.94 - 2571.29) * 0.12
-                + (7507.49 - 3856.94) * 0.14
-        }
-    }
-
-    fn calcular_irrf(&self) -> f64 {
-        let inss = self.calcular_inss();
-        let deducao_dependente = 189.59 * self.dependentes as f64;
-        let base_calculo = self.bruto - inss - deducao_dependente;
-
-        if base_calculo <= 1903.98 {
-            0.0
-        } else if base_calculo <= 2826.65 {
-            (base_calculo * 0.075) - 142.80
-        } else if base_calculo <= 3751.05 {
-            (base_calculo * 0.15) - 354.80
-        } else if base_calculo <= 4664.68 {
-            (base_calculo * 0.225) - 636.13
-        } else {
-            (base_calculo * 0.275) - 869.36
-        }
-    }
-
-    fn calcular_salario_liquido(&self) -> f64 {
-        let inss = self.calcular_inss();
-        let irrf = self.calcular_irrf();
-        let vt = self.bruto * 0.06;
-        let vt_deducao = if vt < self.vale_transporte {
-            vt
-        } else {
-            self.vale_transporte
-        };
-        let vr = self.vale_refeicao;
-        self.bruto - inss - irrf - vt_deducao - vr
-    }
-}
+mod core;
+mod utils;
 
 #[derive(Parser)]
 #[command(name = "clt")]
@@ -92,7 +34,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let valor: f64 = input("Digite o seu salário bruto (exemplo: 1640.00): ")
+    let bruto: f64 = input("Digite o seu salário bruto (exemplo: 1640.00): ")
         .trim()
         .parse()
         .expect("Digite um número válido");
@@ -116,13 +58,23 @@ fn main() {
         dependentes,
         vale_refeicao,
         vale_transporte,
-        bruto: valor,
+        bruto,
     };
 
     match &cli.command {
         CommandEnum::Rescisao => {
             println!("Calculadora de rescisão");
-            // TODO.
+            println!("---------------------------");
+
+            let meses_trabalhados = input("Meses trabalhados: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Valor da Rescisão R$ {:.2}",
+                salario.calcular_rescisao(meses_trabalhados)
+            )
         }
 
         CommandEnum::Liquido => {
@@ -138,78 +90,131 @@ fn main() {
 
         CommandEnum::Ferias => {
             println!("Calculadora de férias");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Valor das Férias: R$ {:.2}", salario.calcular_ferias())
         }
 
         CommandEnum::Salario13 => {
             println!("Calculadora de 13º salário");
-            // TODO.
+            println!("---------------------------");
+
+            let meses_trabalhados = input("Meses trabalhados: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Valor do 13º salário: R$ {:.2}",
+                salario.calcular_13(meses_trabalhados)
+            )
         }
 
         CommandEnum::Fgts => {
             println!("Consulta e cálculo do FGTS");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Valor do FGTS: R$ {:.2}", salario.calcular_fgts())
         }
 
         CommandEnum::HorasExtras => {
             println!("Calculadora de horas extras e adicional noturno");
-            // TODO.
+            println!("---------------------------");
+
+            let horas = input("Horas trabalhadas: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            let percentual = input("Percentual: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Valor de Horas Extras: R$ {:.2}",
+                salario.calcular_horas_extras(horas, percentual)
+            )
         }
 
         CommandEnum::Beneficios => {
             println!("Calculadora de benefícios");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Benefícios: R$ {:.2}", salario.calcular_beneficios())
         }
 
         CommandEnum::Simulacao => {
             println!("Simulação de diferentes cenários de remuneração e benefícios");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Simulação: R$ {:.2}", salario.simulacao())
         }
 
         CommandEnum::Contrato => {
             println!("Verificação de detalhes do contrato de trabalho");
-            // TODO.
+            println!("---------------------------");
+
+            let meses_trabalhados = input("Meses trabalhados: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Contrato: R$ {:.2}",
+                salario.calcular_contrato(meses_trabalhados)
+            );
         }
 
         CommandEnum::Inss => {
             println!("Calculadora de contribuição ao INSS");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Valor do INSS: R$ {:.2}", salario.calcular_inss());
         }
 
         CommandEnum::Irrf => {
             println!("Calculadora de Imposto de Renda Retido na Fonte (IRRF)");
-            // TODO.
-        }
+            println!("---------------------------");
 
-        CommandEnum::Holerite => {
-            println!("Geração de holerites simulados");
-            // TODO.
+            println!("Valor do IRRF: R$ {:.2}", salario.calcular_irrf());
         }
 
         CommandEnum::Reajuste => {
             println!("Simulação de reajustes salariais");
-            // TODO.
+            println!("---------------------------");
+
+            let percentual = input("Percentual: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Valor de Reajuste: R$ {:.2}",
+                salario.calcular_reajuste(percentual)
+            );
         }
 
         CommandEnum::Aviso => {
             println!("Calculadora de aviso prévio");
-            // TODO.
+            println!("---------------------------");
+
+            println!("Valor do Aviso: R$ {:.2}", salario.calcular_aviso());
         }
 
         CommandEnum::Jornada => {
             println!("Gerenciamento de jornada de trabalho");
-            // TODO.
+            println!("---------------------------");
+
+            let horas = input("Horas trabalhadas: ")
+                .trim()
+                .parse()
+                .expect("Digite um número válido");
+
+            println!(
+                "Valor da Jornada: R$ {:.2}",
+                salario.calcular_jornada(horas)
+            );
         }
     }
-}
-
-fn input(prompt: &str) -> String {
-    print!("{}", prompt);
-    io::stdout().flush().unwrap();
-
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Falha ao ler a linha");
-    input
 }
