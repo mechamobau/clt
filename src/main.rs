@@ -104,9 +104,16 @@ fn main() {
                 .parse()
                 .expect("Digite um número válido");
 
+            let (primeira_parcela, segunda_parcela) =
+                salario.calcular_13_parcelas(meses_trabalhados);
+
             println!(
-                "Valor do 13º salário: R$ {:.2}",
-                salario.calcular_13(meses_trabalhados)
+                "\nValor do 13º salário: R$ {:.2}\nPrimeira parcela: R$ {:.2}\nSegunda Parcela: R$ {:.2}\n\nINSS: R$ {:.2}\nIRRF: R$ {:.2}",
+                salario.calcular_13(meses_trabalhados),
+                primeira_parcela,
+                segunda_parcela,
+                salario.calcular_inss(),
+                salario.calcular_irrf(),
             )
         }
 
