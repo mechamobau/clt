@@ -8,22 +8,35 @@ pub struct Salario {
 impl Salario {
     pub fn calcular_inss(&self) -> f64 {
         let salario = self.bruto;
-        if salario <= 1320.00 {
-            salario * 0.075
-        } else if salario <= 2571.29 {
-            1320.00 * 0.075 + (salario - 1320.00) * 0.09
-        } else if salario <= 3856.94 {
-            1320.00 * 0.075 + (2571.29 - 1320.00) * 0.09 + (salario - 2571.29) * 0.12
-        } else if salario <= 7507.49 {
-            1320.00 * 0.075
-                + (2571.29 - 1320.00) * 0.09
-                + (3856.94 - 2571.29) * 0.12
-                + (salario - 3856.94) * 0.14
-        } else {
-            1320.00 * 0.075
-                + (2571.29 - 1320.00) * 0.09
-                + (3856.94 - 2571.29) * 0.12
-                + (7507.49 - 3856.94) * 0.14
+
+        const FAIXA1: f64 = 1320.00;
+        const FAIXA2: f64 = 2571.29;
+        const FAIXA3: f64 = 3856.94;
+        const FAIXA4: f64 = 7507.49;
+
+        const ALIQUOTA1: f64 = 0.075;
+        const ALIQUOTA2: f64 = 0.09;
+        const ALIQUOTA3: f64 = 0.12;
+        const ALIQUOTA4: f64 = 0.14;
+
+        match salario {
+            s if s <= FAIXA1 => s * ALIQUOTA1,
+            s if s <= FAIXA2 => FAIXA1 * ALIQUOTA1 + (s - FAIXA1) * ALIQUOTA2,
+            s if s <= FAIXA3 => {
+                FAIXA1 * ALIQUOTA1 + (FAIXA2 - FAIXA1) * ALIQUOTA2 + (s - FAIXA2) * ALIQUOTA3
+            }
+            s if s <= FAIXA4 => {
+                FAIXA1 * ALIQUOTA1
+                    + (FAIXA2 - FAIXA1) * ALIQUOTA2
+                    + (FAIXA3 - FAIXA2) * ALIQUOTA3
+                    + (s - FAIXA3) * ALIQUOTA4
+            }
+            _ => {
+                FAIXA1 * ALIQUOTA1
+                    + (FAIXA2 - FAIXA1) * ALIQUOTA2
+                    + (FAIXA3 - FAIXA2) * ALIQUOTA3
+                    + (FAIXA4 - FAIXA3) * ALIQUOTA4
+            }
         }
     }
 
@@ -32,16 +45,27 @@ impl Salario {
         let deducao_dependente = 189.59 * self.dependentes as f64;
         let base_calculo = self.bruto - inss - deducao_dependente;
 
-        if base_calculo <= 1903.98 {
-            0.0
-        } else if base_calculo <= 2826.65 {
-            (base_calculo * 0.075) - 142.80
-        } else if base_calculo <= 3751.05 {
-            (base_calculo * 0.15) - 354.80
-        } else if base_calculo <= 4664.68 {
-            (base_calculo * 0.225) - 636.13
-        } else {
-            (base_calculo * 0.275) - 869.36
+        const FAIXA1: f64 = 1903.98;
+        const FAIXA2: f64 = 2826.65;
+        const FAIXA3: f64 = 3751.05;
+        const FAIXA4: f64 = 4664.68;
+
+        const ALIQUOTA1: f64 = 0.075;
+        const ALIQUOTA2: f64 = 0.15;
+        const ALIQUOTA3: f64 = 0.225;
+        const ALIQUOTA4: f64 = 0.275;
+
+        const DEDUCAO1: f64 = 142.80;
+        const DEDUCAO2: f64 = 354.80;
+        const DEDUCAO3: f64 = 636.13;
+        const DEDUCAO4: f64 = 869.36;
+
+        match base_calculo {
+            bc if bc <= FAIXA1 => 0.0,
+            bc if bc <= FAIXA2 => (bc * ALIQUOTA1) - DEDUCAO1,
+            bc if bc <= FAIXA3 => (bc * ALIQUOTA2) - DEDUCAO2,
+            bc if bc <= FAIXA4 => (bc * ALIQUOTA3) - DEDUCAO3,
+            _ => (base_calculo * ALIQUOTA4) - DEDUCAO4,
         }
     }
 
@@ -58,7 +82,7 @@ impl Salario {
         self.bruto - inss - irrf - vt_deducao - vr
     }
 
-    pub fn calcular_rescisao(&self, meses_trabalhados: u32) -> f64 {
+    pub fn calcular_rescisao(&self, meses_trabalhados: i32) -> f64 {
         let salario_liquido = self.calcular_salario_liquido();
         let aviso_previo = if meses_trabalhados > 12 {
             salario_liquido
