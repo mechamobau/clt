@@ -2,24 +2,26 @@
 
 ![Demonstração visual para os comandos descritos no decorrer da documentação](showcase.gif)
 
-Esta é uma ferrament cli para CLT (Consolidação das Leis do Trabalho) escrita em Rust, projetada para calcular diversas componentes relacionadas ao salário de um empregado, incluindo salário líquido, rescisão, férias, 13º salário, FGTS, horas extras, benefícios, simulação de salário, contrato, INSS, IRRF, holerite, reajuste, aviso prévio e jornada de trabalho.
+Esta é uma ferramenta de terminal para CLT (Consolidação das Leis do Trabalho) escrita em Rust, projetada para calcular diversas componentes relacionadas ao salário de um empregado, incluindo salário líquido, rescisão, férias, 13º salário, FGTS, horas extras, benefícios, simulação de salário, contrato, INSS, IRRF, holerite, reajuste, aviso prévio e jornada de trabalho.
 
-## Funcionalidades
+## Comandos Disponíveis
 
-- Cálculo do salário líquido considerando INSS e IRRF
-- Cálculo de rescisão
-- Cálculo de férias
-- Cálculo de 13º salário
-- Cálculo de FGTS
-- Cálculo de horas extras
-- Cálculo de benefícios
-- Simulação de salário
-- Cálculo de contrato
-- Cálculo de reajuste salarial
-- Cálculo de aviso prévio
-- Cálculo de jornada de trabalho
+- `liquido`: Calcula o salário líquido.
+- `rescisao`: Calcula a rescisão.
+- `ferias`: Calcula as férias.
+- `13`: Calcula o 13º salário.
+- `fgts`: Calcula o FGTS.
+- `horas-extras`: Calcula as horas extras.
+- `beneficios`: Calcula os benefícios.
+- `simulacao`: Simula o salário líquido.
+- `contrato`: Calcula o valor do contrato.
+- `reajuste`: Reajusta o salário.
+- `aviso`: Calcula o aviso prévio.
+- `jornada`: Calcula o salário por jornada de trabalho.
 
-## Instalação
+## Uso
+
+### Instalação
 
 1. Certifique-se de ter o [Rust](https://www.rust-lang.org/) instalado em sua máquina.
 2. Clone este repositório:
@@ -34,23 +36,6 @@ Esta é uma ferrament cli para CLT (Consolidação das Leis do Trabalho) escrita
    ```bash
    cargo build --release
    ```
-
-## Uso
-
-### Comandos Disponíveis
-
-- `liquido`: Calcula o salário líquido.
-- `rescisao`: Calcula a rescisão.
-- `ferias`: Calcula as férias.
-- `13`: Calcula o 13º salário.
-- `fgts`: Calcula o FGTS.
-- `horas-extras`: Calcula as horas extras.
-- `beneficios`: Calcula os benefícios.
-- `simulacao`: Simula o salário líquido.
-- `contrato`: Calcula o valor do contrato.
-- `reajuste`: Reajusta o salário.
-- `aviso`: Calcula o aviso prévio.
-- `jornada`: Calcula o salário por jornada de trabalho.
 
 ### Exemplos de Uso
 
