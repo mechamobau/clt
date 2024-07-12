@@ -1,5 +1,7 @@
 # `clt`
 
+[![Build & Test](https://github.com/mechamobau/clt/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/mechamobau/clt/actions/workflows/build-and-test.yml)
+
 ![Demonstração visual para os comandos descritos no decorrer da documentação](showcase.gif)
 
 Esta é uma ferramenta de terminal para CLT (Consolidação das Leis do Trabalho) escrita em Rust, projetada para calcular diversas componentes relacionadas ao salário de um empregado, incluindo salário líquido, rescisão, férias, 13º salário, FGTS, horas extras, benefícios, simulação de salário, contrato, INSS, IRRF, holerite, reajuste, aviso prévio e jornada de trabalho.
